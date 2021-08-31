@@ -26,7 +26,7 @@ async def start(event):
                    )
 @client.on(events.NewMessage(pattern="^/help$"))
 async def help(event):
-  helptext = "**Kömək Menyusu**\n\nTağ etmə qaydası: /mentionall\n__Tağ etmə səbəbiniz.__\n`Nümunə: /mentionall Səsliyə gəlin!`\n__Bot hərkəsi "Səsliyə gəlin" d3yərək tağ edəcək.Bütün üzvlər aiddir__.\n\nSahib [ @ABISHOV_27 ]"
+  helptext = "**Kömək Menyusu**\n\nTağ etmə qaydası: /mentionall\n__Tağ etmə səbəbiniz.__\n`Nümunə: /mentionall Səsliyə gəlin!`\n__Bot hərkəsi Səsliyə gəlin deyərək tağ edəcək.Bütün üzvlər aiddir__.\n\nSahib [ @ABISHOV_27 ]"
   await event.reply(helptext,
                     buttons=(
                       [Button.url('📣 Qrupumuz', 'https://t.me/darkchatgroup12'),
