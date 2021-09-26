@@ -1,87 +1,54 @@
-import os, logging, asyncio
-from telethon import Button
-from telethon import TelegramClient, events
-from telethon.sessions import StringSession
-from telethon.tl.types import ChannelParticipantsAdmins
+#jokerpluginn - @jokisback #
+from telethon.tl.types import ChannelParticipantsAdmins as cp
+from userbot import CMD_HELP, bot
+from userbot.events import register as r
+from userbot.cmdhelp import CmdHelp 
+from time import sleep
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(name)s - [%(levelname)s] - %(message)s'
-)
-LOGGER = logging.getLogger(__name__)
+@r(outgoing=True, pattern="^.all(?: |$)(.*)")
+async def _(q):
+	if q.fwd_from:
+		return
 
-api_id = int(os.environ.get("APP_ID"))
-api_hash = os.environ.get("API_HASH")
-bot_token = os.environ.get("TOKEN")
-client = TelegramClient('client', api_id, api_hash).start(bot_token=bot_token)
+	if q.pattern_match.group(1):
+		seasons = q.pattern_match.group(1)
+	else:
+		seasons = ""
 
-@client.on(events.NewMessage(pattern="^/start$"))
-async def start(event):
-  await event.reply("__**Salam mən tağ botuyam**, Məni qruplara əlavə edərək qrup üzvlərini tağ edə bilərsən 👻\nBas **/help** kömək al__\n\n Sahibimlə əlaqə : @ABISHOV_27",
-                    buttons=(
-                      [Button.url('📣 Qrupumuz', 'https://t.me/darkchatgroup12'),
-                      Button.url('📦 Digər mənbələr', 'https://t.me/YusifinBiosu')]
-                    ),
-                    link_preview=False
-                   )
-@client.on(events.NewMessage(pattern="^/help$"))
-async def help(event):
-  helptext = "**Kömək Menyusu**\n\nTağ etmə qaydası: /mentionall\n__Tağ etmə səbəbiniz.__\n`Nümunə: /mentionall Səsliyə gəlin!`\n__Bot hərkəsi Səsliyə gəlin deyərək tağ edəcək.Bütün üzvlər aiddir__.\n\nSahib [ @ABISHOV_27 ]"
-  await event.reply(helptext,
-                    buttons=(
-                      [Button.url('📣 Qrupumuz', 'https://t.me/darkchatgroup12'),
-                      Button.url('📦 Digər mənbələr', 'https://t.me/YusifinBiosu')]
-                    ),
-                    link_preview=False
-                   )
-  
-@client.on(events.NewMessage(pattern="^/mentionall ?(.*)"))
-async def mentionall(event):
-  if event.is_private:
-    return await event.respond("__Bu əmri yalnızca qrup və kanallarda istifadə edə bilərsiniz!__")
-  
-  admins = []
-  async for admin in client.iter_participants(event.chat_id, filter=ChannelParticipantsAdmins):
-    admins.append(admin.id)
-  if not event.sender_id in admins:
-    return await event.respond("__Sadəcə adminlər bəhs edə bilərlər!__")
-  
-  if event.pattern_match.group(1):
-    mode = "text_on_cmd"
-    msg = event.pattern_match.group(1)
-  elif event.reply_to_msg_id:
-    mode = "text_on_reply"
-    msg = event.reply_to_msg_id
-    if msg == None:
-        return await event.respond("__Əvvəlki mesajlara tağ edə bilmirəm! (Qrupa əlavə edilməmişdən əvvəlki mesajlar)__")
-  elif event.pattern_match.group(1) and event.reply_to_msg_id:
-    return await event.respond("__Give me one argument!__")
-  else:
-    return await event.respond("__Bir mesaja yanıt verin və ya tağ üçün səbəb yazın!__")
-  
-  if mode == "text_on_cmd":
-    usrnum = 0
-    usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
-      usrnum += 1
-      usrtxt += f"[{usr.first_name}](tg://user?id={usr.id}) "
-      if usrnum == 5:
-        await client.send_message(event.chat_id, f"{usrtxt}\n\n{msg}")
-        await asyncio.sleep(2)
-        usrnum = 0
-        usrtxt = ""
-        
-  if mode == "text_on_reply":
-    usrnum = 0
-    usrtxt = ""
-    async for usr in client.iter_participants(event.chat_id):
-      usrnum += 1
-      usrtxt += f"[{usr.first_name}](tg://user?id={usr.id}) "
-      if usrnum == 5:
-        await client.send_message(event.chat_id, usrtxt, reply_to=msg)
-        await asyncio.sleep(2)
-        usrnum = 0
-        usrtxt = ""
-        
-print(">> BOT STARTED <<")
-client.run_until_disconnected()
+	chat = await q.get_input_chat()
+	a_=0
+	await q.delete()
+	async for i in bot.iter_participants(chat):
+		if a_ == 5000:
+			break
+		a_+=1
+		await q.client.send_message(q.chat_id, "[{}](tg://user?id={}) {}".format(i.first_name, i.id, seasons))
+		sleep(4)
+
+
+@r(outgoing=True, pattern="^.alladmin(?: |$)(.*)")
+async def _(q):
+	if q.fwd_from:
+		return
+	
+
+	if q.pattern_match.group(1):
+		seasons = q.pattern_match.group(1)
+	else:
+		seasons = ""
+
+	chat = await q.get_input_chat()
+	a_=0
+	await q.delete()
+	async for i in bot.iter_participants(chat, filter=cp):
+		if a_ == 5000:
+			break
+		a_+=1
+		await q.client.send_message(q.chat_id, "[{}](tg://user?id={}) {}".format(i.first_name, i.id, seasons))
+		sleep(4)
+
+Help = CmdHelp('all')
+Help.add_command('all <sebep>', None, 'Gruptaki kullanıcıları etiketler ')
+Help.add_command('alladmin <sebep>', None, 'Tüm adminleri etiketler')
+Help.add_info('[𝙅𝙊𝙆](https://t.me/jokisback) tarafından [𝘼𝙎𝙀𝙉𝘼](https://t.me/asenauserbot) için yapıldı')
+Help.add()	
